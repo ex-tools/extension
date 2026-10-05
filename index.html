@@ -21,9 +21,65 @@ background:#0d1421;transition:.2s;box-shadow:0 0 12px #00f5ff12}
 box-shadow:0 0 20px #00f5ff44;background:#101b2b}
 .name{font-weight:bold}.dl{color:#00f5ff;font-size:13px}
 .footer{text-align:center;margin-top:22px;color:#566174;font-size:11px}
+
+/* === WARNING GATE === */
+.warning-overlay{
+  position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;
+  padding:20px;background:rgba(2,4,10,.96);
+  backdrop-filter:blur(14px);
+}
+.warning-card{
+  width:min(560px,94vw);padding:34px 30px;border:1px solid #ff174477;border-radius:20px;
+  background:linear-gradient(145deg,#100a12f5,#080c16f5);
+  box-shadow:0 0 22px #ff174422,0 0 70px #00f5ff0d;
+  text-align:center;
+}
+.warning-icon{
+  width:68px;height:68px;margin:0 auto 18px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid #ff1744;box-shadow:0 0 18px #ff174455, inset 0 0 16px #ff174422;
+  color:#ff1744;font-size:31px;font-weight:900;text-shadow:0 0 12px #ff1744;
+}
+.warning-title{
+  margin:0 0 14px;color:#ff1744;font-size:25px;font-weight:900;
+  letter-spacing:.5px;text-shadow:0 0 12px #ff1744;
+}
+.warning-text{
+  margin:0 auto 24px;max-width:470px;color:#e8edf7;line-height:1.65;font-size:15px;
+}
+.warning-text strong{color:#ff5574}
+.warning-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.warning-btn{
+  border:1px solid #00f5ff99;border-radius:11px;padding:13px 20px;
+  background:#0b1725;color:#fff;font-weight:800;cursor:pointer;
+  box-shadow:0 0 14px #00f5ff16;transition:.2s;
+}
+.warning-btn:hover{transform:translateY(-2px);border-color:#00f5ff;box-shadow:0 0 24px #00f5ff44}
+.warning-btn.accept{
+  border-color:#ff1744aa;background:#210d16;color:#fff;
+  box-shadow:0 0 16px #ff174422;
+}
+.warning-btn.accept:hover{border-color:#ff1744;box-shadow:0 0 26px #ff174455}
+body.locked>*:not(.warning-overlay){filter:blur(5px);pointer-events:none;user-select:none}
+
 </style>
 </head>
-<body>
+<body class="locked">
+
+<div class="warning-overlay" id="warningGate">
+  <div class="warning-card" role="alertdialog" aria-modal="true" aria-labelledby="warningTitle">
+    <div class="warning-icon">!</div>
+    <h2 class="warning-title" id="warningTitle">PERINGATAN!</h2>
+    <p class="warning-text">
+      <strong>Penagihan C/D0 (Sebelum Keterlambatan) Dilarang Keras Menggunakan Tools ini.</strong><br><br>
+      Pastikan penggunaan tools sesuai dengan ketentuan dan tujuan yang telah ditetapkan.
+    </p>
+    <div class="warning-actions">
+      <button class="warning-btn accept" id="warningAccept" type="button">SAYA MENGERTI &amp; LANJUTKAN</button>
+    </div>
+  </div>
+</div>
+
 <div class="box">
 <h1>TOOLS DOWNLOAD</h1>
 <p></p>
@@ -35,5 +91,23 @@ box-shadow:0 0 20px #00f5ff44;background:#101b2b}
 </a>
 <div class="footer">2026</div>
 </div>
+
+<script>
+(function(){
+  const gate = document.getElementById('warningGate');
+  const accept = document.getElementById('warningAccept');
+  function unlock(){
+    document.body.classList.remove('locked');
+    gate.style.opacity = '0';
+    gate.style.transition = 'opacity .2s ease';
+    setTimeout(() => gate.remove(), 220);
+    sessionStorage.setItem('warningAccepted', '1');
+  }
+  // Peringatan muncul setiap sesi halaman baru.
+  accept.addEventListener('click', unlock);
+  accept.focus();
+})();
+</script>
+
 </body>
 </html>
